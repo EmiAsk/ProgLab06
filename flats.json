@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1223,
+    "name": "name",
+    "coordinates": {
+      "x": 999,
+      "y": 700.0
+    },
+    "creationDate": "2023-02-17T14:58:53.428316200+03:00[Europe/Moscow]",
+    "area": 5,
+    "numberOfRooms": 5,
+    "furnish": "NONE",
+    "view": "STREET",
+    "transport": "NONE",
+    "house": {
+      "name": "HOUSE",
+      "year": 600,
+      "numberOfFlatsOnFloor": 10
+    }
+  },
+  {
+    "id": 1,
+    "name": "Emil",
+    "coordinates": {
+      "x": 1,
+      "y": 111.0
+    },
+    "creationDate": "2023-03-09T14:58:53.428316200+03:00[Europe/Moscow]",
+    "area": 222,
+    "numberOfRooms": 5,
+    "furnish": "BAD",
+    "view": "TERRIBLE",
+    "house": {
+      "name": "Emil\u0027s House",
+      "year": 123,
+      "numberOfFlatsOnFloor": 5
+    }
+  },
+  {
+    "id": 11606203153,
+    "name": "OKAY",
+    "coordinates": {
+      "x": -123,
+      "y": 779.0
+    },
+    "creationDate": "2023-03-09T22:32:43.898262300+03:00[Europe/Moscow]",
+    "area": 715,
+    "numberOfRooms": 123,
+    "furnish": "FINE",
+    "view": "YARD",
+    "transport": "ENOUGH",
+    "house": {
+      "name": "HOUSE NAME OKAY",
+      "year": 636,
+      "numberOfFlatsOnFloor": 1
+    }
+  }
+]
