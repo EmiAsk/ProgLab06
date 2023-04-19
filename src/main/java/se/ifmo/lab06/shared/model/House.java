@@ -1,8 +1,9 @@
-package se.ifmo.lab06.server.model;
+package se.ifmo.lab06.shared.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class House {
+public class House implements Serializable {
     private String name; //Поле не может быть null
     private Long year; //Максимальное значение поля: 636, Значение поля должно быть больше 0
     private int numberOfFlatsOnFloor; //Значение поля должно быть больше 0

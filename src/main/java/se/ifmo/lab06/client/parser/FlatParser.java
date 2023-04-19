@@ -1,7 +1,7 @@
 package se.ifmo.lab06.client.parser;
 
-import se.ifmo.lab06.client.model.*;
 import se.ifmo.lab06.client.util.Printer;
+import se.ifmo.lab06.shared.model.*;
 
 import java.util.Arrays;
 import java.util.Scanner;

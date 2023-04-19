@@ -26,7 +26,7 @@ public class ExecuteScriptCommand extends Command {
         try (FileReader fileReader = new FileReader(fileName)) {
             var provider = new IOProvider(new Scanner(fileReader), this.provider.getPrinter());
             var commandManager = new CommandManager(client, provider, recDepth + 1);
-            var commandParser = new CommandParser(commandManager, provider, recDepth + 1);
+            var commandParser =  new CommandParser(client, commandManager, provider, recDepth + 1);
             commandParser.run();
         } catch (FileNotFoundException e) {
             provider.getPrinter().print("File not found or access denied (read).");

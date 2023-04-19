@@ -1,2 +1,2 @@
 shuffle
-execute_script script.txt
+show

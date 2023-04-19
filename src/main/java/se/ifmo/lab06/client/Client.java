@@ -1,44 +1,45 @@
 package se.ifmo.lab06.client;
 
-import se.ifmo.lab06.client.dto.Request;
-import se.ifmo.lab06.client.dto.Response;
-import se.ifmo.lab06.client.util.CLIPrinter;
-import se.ifmo.lab06.client.util.Printer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import se.ifmo.lab06.shared.dto.request.Request;
+import se.ifmo.lab06.shared.dto.response.Response;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.util.Arrays;
 
 public class Client implements AutoCloseable {
+
+    private static final Logger logger = LoggerFactory.getLogger(Client.class);
+
     private final DatagramChannel connection;
     private final InetSocketAddress address;
-    private final Printer printer;
 
     private static final int BATCH = 1024;
 
     private Client(DatagramChannel connection, InetSocketAddress address) {
         this.connection = connection;
         this.address = address;
-        this.printer = new CLIPrinter();
     }
 
     public static Client connect(String host, int port) throws IOException {
         var dc = DatagramChannel.open();
-        dc.configureBlocking(false);
         return new Client(dc, new InetSocketAddress(host, port));
     }
 
     public void send(byte[] data) throws IOException {
-        int n = (int) Math.ceil((double) data.length / BATCH);
+        int n = (int) Math.ceil((double) data.length / (BATCH - 1));
 
         for (int i = 0; i < n; i++) {
             byte[] batch = new byte[BATCH];
-            System.arraycopy(data, i * BATCH, batch, 0, BATCH);
+            System.arraycopy(data, i * (BATCH - 1), batch, 0, Math.min(data.length - i * (BATCH - 1), BATCH - 1));
             batch[BATCH - 1] = (byte) ((i + 1 == n) ? 1 : 0);
             connection.send(ByteBuffer.wrap(batch), address);
-            printer.printf("Batch %s/%s has been sent\n", i + 1, n);
+            logger.info("Batch {}/{} has been sent", i + 1, n);
         }
     }
 
@@ -55,7 +56,6 @@ public class Client implements AutoCloseable {
         var objectStream = new ObjectInputStream(byteStream);
 
         return (Response) objectStream.readObject();
-
     }
 
     public byte[] receive() throws IOException {
@@ -67,10 +67,13 @@ public class Client implements AutoCloseable {
             while (address == null) {
                 address = connection.receive(buffer);
             }
-            data.write(buffer.array());
+
+            data.write(Arrays.copyOf(buffer.array(), BATCH - 1));
             if (buffer.array()[BATCH - 1] == (byte) 1) {
                 return data.toByteArray();
             }
+            address = null;
+            buffer.clear();
         }
     }
 
@@ -79,9 +82,11 @@ public class Client implements AutoCloseable {
             send(request);
             return receiveResponse();
         } catch (ClassNotFoundException e) {
-            return new Response("Error. Invalid response format from server", Response.Status.ERROR);
+            throw new RuntimeException(e);
+//            return new Response("Error. Invalid response format from server", Response.Status.ERROR);
         } catch (IOException e) {
-            return new Response("Error. Unable to send or receive data", Response.Status.ERROR);
+            throw new RuntimeException(e);
+//            return new Response("Error. Unable to send or receive data", Response.Status.ERROR);
         }
     }
 

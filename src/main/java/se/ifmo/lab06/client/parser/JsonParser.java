@@ -3,7 +3,7 @@ package se.ifmo.lab06.client.parser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
-import se.ifmo.lab06.client.model.Flat;
+import se.ifmo.lab06.shared.model.Flat;
 import se.ifmo.lab06.client.util.ZonedDateTimeDeserializer;
 
 import java.io.FileReader;

@@ -2,8 +2,8 @@ package se.ifmo.lab06.server.manager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import se.ifmo.lab06.server.model.Flat;
-import se.ifmo.lab06.server.model.Furnish;
+import se.ifmo.lab06.shared.model.Flat;
+import se.ifmo.lab06.shared.model.Furnish;
 import se.ifmo.lab06.server.parser.JsonParser;
 import se.ifmo.lab06.server.util.ZonedDateTimeSerializer;
 

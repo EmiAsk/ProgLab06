@@ -4,6 +4,9 @@ package se.ifmo.lab06.server.command;
 import se.ifmo.lab06.server.manager.CollectionManager;
 import se.ifmo.lab06.server.util.IOProvider;
 import se.ifmo.lab06.server.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.dto.request.CommandRequest;
+import se.ifmo.lab06.shared.dto.response.CommandResponse;
+import se.ifmo.lab06.shared.dto.response.Response;
 
 public class InfoCommand extends Command {
     public InfoCommand(IOProvider provider, CollectionManager collection) {
@@ -12,9 +15,9 @@ public class InfoCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) throws InvalidArgsException {
-        validateArgs(args, 0);
-        provider.getPrinter().print(collection.description());
+    public Response execute(CommandRequest request) throws InvalidArgsException {
+        validateArgs(request.args(), getArgNumber());
+        return new CommandResponse(collection.description());
     }
 
 

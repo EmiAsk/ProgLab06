@@ -3,8 +3,15 @@ package se.ifmo.lab06.server.command;
 import se.ifmo.lab06.server.manager.CollectionManager;
 import se.ifmo.lab06.server.util.IOProvider;
 import se.ifmo.lab06.server.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.dto.StatusCode;
+import se.ifmo.lab06.shared.dto.request.CommandRequest;
+import se.ifmo.lab06.shared.dto.response.CommandResponse;
+import se.ifmo.lab06.shared.dto.response.Response;
 
 public class RemoveByIdCommand extends Command {
+    
+    private static final int ARGS = 1;
+    
     public RemoveByIdCommand(IOProvider provider, CollectionManager collection) {
         super("remove_by_id {id}", "удалить элемент из коллекции по его id", provider, collection);
     }
@@ -20,15 +27,19 @@ public class RemoveByIdCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) throws InvalidArgsException {
-        validateArgs(args, 1);
+    public Response execute(CommandRequest request) throws InvalidArgsException {
+        validateArgs(request.args(), getArgNumber());
 
-        long flatId = Long.parseLong(args[0]);
+        long flatId = Long.parseLong(request.args()[0]);
         if (collection.get(flatId) == null) {
-            provider.getPrinter().print("Flat with specified ID doesn't exist.");
-            return;
+            return new CommandResponse("Flat with specified ID doesn't exist.", StatusCode.ERROR);
         }
         collection.removeById(flatId);
-        provider.getPrinter().printf("Flat (ID %s) removed successfully.\n", flatId);
+        return new CommandResponse("Flat (ID %s) removed successfully.\n".formatted(flatId));
+    }
+
+    @Override
+    public int getArgNumber() {
+        return ARGS;
     }
 }

@@ -3,6 +3,9 @@ package se.ifmo.lab06.server.command;
 import se.ifmo.lab06.server.manager.CollectionManager;
 import se.ifmo.lab06.server.util.IOProvider;
 import se.ifmo.lab06.server.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.dto.request.CommandRequest;
+import se.ifmo.lab06.shared.dto.response.CommandResponse;
+import se.ifmo.lab06.shared.dto.response.Response;
 
 import java.util.Map;
 
@@ -15,13 +18,15 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void execute(String[] args) throws InvalidArgsException {
-        validateArgs(args, 0);
+    public Response execute(CommandRequest request) throws InvalidArgsException {
+        validateArgs(request.args(), getArgNumber());
         String line = "-".repeat(120);
-        provider.getPrinter().print(line);
+        var builder = new StringBuilder();
+        builder.append(line).append("\n");
         for (Command command : commands.values()) {
-            provider.getPrinter().print(command.getDescription());
-            provider.getPrinter().print(line);
+            builder.append(command.getDescription()).append("\n");
+            builder.append(line).append("\n");
         }
+        return new CommandResponse(builder.toString());
     }
 }

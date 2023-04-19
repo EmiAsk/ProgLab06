@@ -1,6 +1,8 @@
-package se.ifmo.lab06.client.model;
+package se.ifmo.lab06.shared.model;
 
-public class Coordinates {
+import java.io.Serializable;
+
+public class Coordinates implements Serializable {
     private long x; //Значение поля должно быть больше -952
     private Float y; //Максимальное значение поля: 779, Поле не может быть null
 
