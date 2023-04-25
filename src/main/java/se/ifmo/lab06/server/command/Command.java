@@ -1,14 +1,15 @@
 package se.ifmo.lab06.server.command;
 
 import se.ifmo.lab06.server.manager.CollectionManager;
-import se.ifmo.lab06.server.util.IOProvider;
-import se.ifmo.lab06.server.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.util.IOProvider;
+import se.ifmo.lab06.shared.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.util.ArgumentValidator;
 import se.ifmo.lab06.shared.dto.request.CommandRequest;
 import se.ifmo.lab06.shared.dto.response.Response;
 
 public abstract class Command {
 
-    private static final int ARGS = 0;
+    private static final Class<?>[] ARGS = new Class<?>[]{};
 
     private final String name;
     private final String description;
@@ -31,20 +32,20 @@ public abstract class Command {
     }
 
     public String getDescription() {
-        return String.format("%s    |     %s", name, description);
+        return String.format("%40s    |     %s", name, description);
     }
 
     public boolean isRequiresModel() {
         return requiresModel;
     }
 
-    public void validateArgs(String[] args, int length) throws InvalidArgsException {
-        if (args.length != length) {
+    public void validateArgs(String[] args) throws InvalidArgsException {
+        if (!ArgumentValidator.validate(getArgumentTypes(), args)) {
             throw new InvalidArgsException();
         }
     }
 
-    public int getArgNumber() {
+    public Class<?>[] getArgumentTypes() {
         return ARGS;
     }
 }

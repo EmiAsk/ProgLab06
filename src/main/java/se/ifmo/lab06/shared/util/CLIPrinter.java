@@ -1,4 +1,4 @@
-package se.ifmo.lab06.server.util;
+package se.ifmo.lab06.shared.util;
 
 public class CLIPrinter implements Printer {
     @Override

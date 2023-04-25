@@ -1,59 +1,44 @@
 package se.ifmo.lab06.server;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import se.ifmo.lab06.server.manager.CollectionManager;
 import se.ifmo.lab06.server.manager.CommandManager;
-import se.ifmo.lab06.shared.dto.request.CommandRequest;
-import se.ifmo.lab06.shared.dto.request.GetCommandsRequest;
-import se.ifmo.lab06.shared.dto.request.ValidationRequest;
-import se.ifmo.lab06.shared.dto.response.CommandResponse;
-import se.ifmo.lab06.shared.dto.response.GetCommandsResponse;
-import se.ifmo.lab06.server.util.CLIPrinter;
-import se.ifmo.lab06.server.util.IOProvider;
-import se.ifmo.lab06.server.util.Printer;
-import se.ifmo.lab06.shared.dto.response.ValidationResponse;
+import se.ifmo.lab06.server.network.Server;
+import se.ifmo.lab06.shared.util.CLIPrinter;
+import se.ifmo.lab06.shared.util.IOProvider;
+import se.ifmo.lab06.shared.util.Printer;
 
 import java.io.FileNotFoundException;
+import java.util.Properties;
 import java.util.Scanner;
 
 public class Main {
 
-    private final static String FILENAME = "flats.json"; // System.getenv("FILENAME");
+    private static final Logger logger = LoggerFactory.getLogger(Server.class);
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-        Printer printer = new CLIPrinter();
-        IOProvider provider = new IOProvider(scanner, printer);
+        try (var stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("server.properties")) {
+            Properties props = new Properties();
+            props.load(stream);
+            var filename = props.getProperty("FILENAME");
+            var port = Integer.parseInt(props.getProperty("PORT"));
 
-        CollectionManager collectionManager = CollectionManager.fromFile(FILENAME);
-        CommandManager commandManager = new CommandManager(collectionManager, provider, 0);
+            Scanner scanner = new Scanner(System.in);
+            Printer printer = new CLIPrinter();
+            IOProvider provider = new IOProvider(scanner, printer);
 
-        try (var server = new Server()) {
-            while (true) {
-                var pair = server.receiveRequest();
-                var address = pair.getKey();
-                var request = pair.getValue();
+            CollectionManager collectionManager = CollectionManager.fromFile(filename);
+            CommandManager commandManager = new CommandManager(collectionManager, provider, 0);
 
-                if (request instanceof GetCommandsRequest getRequest) {
-                    printer.printf("Запрос: %s получен\n", getRequest);
-                    server.send(address, new GetCommandsResponse(commandManager.getCommands()));
-                }
-
-                if (request instanceof CommandRequest commandRequest) {
-                    printer.printf("Команда: %s. Получена от: %s\n", commandRequest.name(), address);
-                    server.send(address, commandManager.execute(commandRequest));
-                }
-
-                if (request instanceof ValidationRequest validationRequest) {
-                    printer.printf("Запрос на валидацию: %s получен\n", validationRequest);
-                    server.send(address, commandManager.validate(validationRequest));
-                }
-
+            try (var server = new Server(commandManager, port)) {
+                server.run();
             }
+        } catch (FileNotFoundException e) {
+            logger.error("File not found or access denied (read):\n{}", e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e);
-//            printer.print("Произошла ошибка при подключении.");
-//            System.exit(1);
+            logger.error("Error. Something went wrong:\n{}", e.getMessage());
         }
 
 

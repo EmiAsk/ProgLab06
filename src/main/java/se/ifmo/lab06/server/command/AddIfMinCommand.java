@@ -1,13 +1,11 @@
 package se.ifmo.lab06.server.command;
 
 import se.ifmo.lab06.server.manager.CollectionManager;
-import se.ifmo.lab06.server.util.IOProvider;
-import se.ifmo.lab06.server.exception.InvalidArgsException;
-import se.ifmo.lab06.shared.dto.StatusCode;
+import se.ifmo.lab06.shared.util.IOProvider;
+import se.ifmo.lab06.shared.exception.InvalidArgsException;
 import se.ifmo.lab06.shared.dto.request.CommandRequest;
 import se.ifmo.lab06.shared.dto.response.CommandResponse;
 import se.ifmo.lab06.shared.dto.response.Response;
-import se.ifmo.lab06.shared.model.Flat;
 
 public class AddIfMinCommand extends Command {
     public AddIfMinCommand(IOProvider provider, CollectionManager collection) {
@@ -19,10 +17,8 @@ public class AddIfMinCommand extends Command {
 
     @Override
     public Response execute(CommandRequest request) throws InvalidArgsException {
-        validateArgs(request.args(), getArgNumber());
+        validateArgs(request.args());
 
-//        Flat flat = n;
-//        // TODO: обработка конца файла или ввода NoSuchElementException3
         var flat = request.model();
         var minFlat = collection.min();
         if (minFlat.getArea() <= flat.getArea()) {

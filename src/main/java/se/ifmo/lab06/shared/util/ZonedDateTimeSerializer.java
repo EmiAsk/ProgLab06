@@ -1,4 +1,4 @@
-package se.ifmo.lab06.client.util;
+package se.ifmo.lab06.shared.util;
 
 import com.google.gson.*;
 

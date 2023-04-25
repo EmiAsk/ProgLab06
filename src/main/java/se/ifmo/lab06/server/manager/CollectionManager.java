@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import se.ifmo.lab06.shared.model.Flat;
 import se.ifmo.lab06.shared.model.Furnish;
 import se.ifmo.lab06.server.parser.JsonParser;
-import se.ifmo.lab06.server.util.ZonedDateTimeSerializer;
+import se.ifmo.lab06.shared.util.ZonedDateTimeSerializer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

@@ -1,8 +1,8 @@
 package se.ifmo.lab06.server.command;
 
 import se.ifmo.lab06.server.manager.CollectionManager;
-import se.ifmo.lab06.server.util.IOProvider;
-import se.ifmo.lab06.server.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.util.IOProvider;
+import se.ifmo.lab06.shared.exception.InvalidArgsException;
 import se.ifmo.lab06.shared.dto.StatusCode;
 import se.ifmo.lab06.shared.dto.request.CommandRequest;
 import se.ifmo.lab06.shared.dto.response.CommandResponse;
@@ -10,25 +10,15 @@ import se.ifmo.lab06.shared.dto.response.Response;
 
 public class RemoveByIdCommand extends Command {
     
-    private static final int ARGS = 1;
+    private static final Class<?>[] ARGS = new Class<?>[]{Long.class};
     
     public RemoveByIdCommand(IOProvider provider, CollectionManager collection) {
         super("remove_by_id {id}", "удалить элемент из коллекции по его id", provider, collection);
     }
 
     @Override
-    public void validateArgs(String[] args, int length) throws InvalidArgsException {
-        try {
-            super.validateArgs(args, length);
-            long id = Long.parseLong(args[0]);
-        } catch (IndexOutOfBoundsException | NumberFormatException e) {
-            throw new InvalidArgsException();
-        }
-    }
-
-    @Override
     public Response execute(CommandRequest request) throws InvalidArgsException {
-        validateArgs(request.args(), getArgNumber());
+        validateArgs(request.args());
 
         long flatId = Long.parseLong(request.args()[0]);
         if (collection.get(flatId) == null) {
@@ -39,7 +29,7 @@ public class RemoveByIdCommand extends Command {
     }
 
     @Override
-    public int getArgNumber() {
+    public Class<?>[] getArgumentTypes() {
         return ARGS;
     }
 }

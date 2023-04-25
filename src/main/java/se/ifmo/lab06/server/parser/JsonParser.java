@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import se.ifmo.lab06.shared.model.Flat;
-import se.ifmo.lab06.server.util.ZonedDateTimeDeserializer;
+import se.ifmo.lab06.shared.util.ZonedDateTimeDeserializer;
 
 import java.io.FileReader;
 import java.time.ZonedDateTime;

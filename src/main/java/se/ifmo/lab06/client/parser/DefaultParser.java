@@ -1,16 +1,17 @@
 package se.ifmo.lab06.client.parser;
 
-import se.ifmo.lab06.client.exception.InterruptCommandException;
-import se.ifmo.lab06.client.util.Printer;
+import se.ifmo.lab06.shared.exception.InterruptCommandException;
+import se.ifmo.lab06.shared.parser.Parser;
+import se.ifmo.lab06.shared.util.Printer;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class DefaultTypeParser implements Parser {
+public class DefaultParser implements Parser {
     private final Scanner input;
     private final Printer printer;
 
-    public DefaultTypeParser(Scanner scanner, Printer printer) {
+    public DefaultParser(Scanner scanner, Printer printer) {
         this.input = scanner;
         this.printer = printer;
     }

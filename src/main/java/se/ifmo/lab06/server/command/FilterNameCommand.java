@@ -1,18 +1,18 @@
 package se.ifmo.lab06.server.command;
 
-import se.ifmo.lab06.server.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.exception.InvalidArgsException;
 import se.ifmo.lab06.server.manager.CollectionManager;
 import se.ifmo.lab06.shared.dto.request.CommandRequest;
 import se.ifmo.lab06.shared.dto.response.CommandResponse;
 import se.ifmo.lab06.shared.dto.response.Response;
 import se.ifmo.lab06.shared.model.Flat;
-import se.ifmo.lab06.server.util.IOProvider;
+import se.ifmo.lab06.shared.util.IOProvider;
 
 import java.util.List;
 
 public class FilterNameCommand extends Command {
 
-    private static final int ARGS = 1;
+    private static final Class<?>[] ARGS = new Class<?>[]{String.class};
 
     public FilterNameCommand(IOProvider provider, CollectionManager collection) {
         super("filter_starts_with_name {name}",
@@ -22,7 +22,7 @@ public class FilterNameCommand extends Command {
 
     @Override
     public Response execute(CommandRequest request) throws InvalidArgsException {
-        validateArgs(request.args(), getArgNumber());
+        validateArgs(request.args());
         String name = request.args()[0];
         List<Flat> flats = collection.getCollection()
                 .stream()
@@ -41,7 +41,7 @@ public class FilterNameCommand extends Command {
     }
 
     @Override
-    public int getArgNumber() {
+    public Class<?>[] getArgumentTypes() {
         return ARGS;
     }
 }

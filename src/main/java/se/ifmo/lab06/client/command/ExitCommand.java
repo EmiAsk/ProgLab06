@@ -1,9 +1,9 @@
 package se.ifmo.lab06.client.command;
 
 import se.ifmo.lab06.client.Client;
-import se.ifmo.lab06.client.exception.ExitException;
-import se.ifmo.lab06.client.exception.InvalidArgsException;
-import se.ifmo.lab06.client.util.IOProvider;
+import se.ifmo.lab06.shared.exception.ExitException;
+import se.ifmo.lab06.shared.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.util.IOProvider;
 
 public class ExitCommand extends Command {
     public ExitCommand(IOProvider provider, Client client) {
@@ -12,7 +12,7 @@ public class ExitCommand extends Command {
 
     @Override
     public void execute(String[] args) throws InvalidArgsException {
-        validateArgs(args, 0);
+        validateArgs(args);
         throw new ExitException();
     }
 }

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import se.ifmo.lab06.shared.dto.request.Request;
 import se.ifmo.lab06.shared.dto.response.Response;
 
+import javax.naming.TimeLimitExceededException;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -15,11 +16,12 @@ import java.util.Arrays;
 public class Client implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
+    private static final int BATCH = 1024;
+    private static final long MAX_DELAY = 2_000_000_000;
 
     private final DatagramChannel connection;
     private final InetSocketAddress address;
 
-    private static final int BATCH = 1024;
 
     private Client(DatagramChannel connection, InetSocketAddress address) {
         this.connection = connection;
@@ -28,6 +30,7 @@ public class Client implements AutoCloseable {
 
     public static Client connect(String host, int port) throws IOException {
         var dc = DatagramChannel.open();
+        dc.configureBlocking(false);
         return new Client(dc, new InetSocketAddress(host, port));
     }
 
@@ -50,7 +53,7 @@ public class Client implements AutoCloseable {
         send(byteStream.toByteArray());
     }
 
-    public Response receiveResponse() throws IOException, ClassNotFoundException {
+    public Response receiveResponse() throws IOException, ClassNotFoundException, TimeLimitExceededException {
         byte[] data = receive();
         var byteStream = new ByteArrayInputStream(data);
         var objectStream = new ObjectInputStream(byteStream);
@@ -58,13 +61,17 @@ public class Client implements AutoCloseable {
         return (Response) objectStream.readObject();
     }
 
-    public byte[] receive() throws IOException {
+    public byte[] receive() throws IOException, TimeLimitExceededException {
         ByteBuffer buffer = ByteBuffer.allocate(BATCH);
         SocketAddress address = null;
         var data = new ByteArrayOutputStream();
 
+        var startTime = System.nanoTime();
         while (true) {
             while (address == null) {
+                if ((System.nanoTime() - startTime) > MAX_DELAY) {
+                    throw new TimeLimitExceededException("Server not available. Try later");
+                }
                 address = connection.receive(buffer);
             }
 
@@ -77,17 +84,9 @@ public class Client implements AutoCloseable {
         }
     }
 
-    public Response sendAndReceive(Request request) {
-        try {
-            send(request);
-            return receiveResponse();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-//            return new Response("Error. Invalid response format from server", Response.Status.ERROR);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-//            return new Response("Error. Unable to send or receive data", Response.Status.ERROR);
-        }
+    public Response sendAndReceive(Request request) throws IOException, ClassNotFoundException, TimeLimitExceededException {
+        send(request);
+        return receiveResponse();
     }
 
     public void close() throws IOException {

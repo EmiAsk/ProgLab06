@@ -1,4 +1,4 @@
-package se.ifmo.lab06.server.exception;
+package se.ifmo.lab06.shared.exception;
 
 public class InvalidArgsException extends Exception {
     public InvalidArgsException(String message) {
@@ -6,7 +6,6 @@ public class InvalidArgsException extends Exception {
     }
 
     public InvalidArgsException() {
-        super("Invalid args");
+        super("Invalid arguments");
     }
-
 }

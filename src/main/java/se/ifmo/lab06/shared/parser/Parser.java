@@ -1,4 +1,4 @@
-package se.ifmo.lab06.server.parser;
+package se.ifmo.lab06.shared.parser;
 
 public interface Parser {
     String parseString(String name, String descr);

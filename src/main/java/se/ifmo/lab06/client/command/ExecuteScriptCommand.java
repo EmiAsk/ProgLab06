@@ -1,10 +1,10 @@
 package se.ifmo.lab06.client.command;
 
 import se.ifmo.lab06.client.Client;
-import se.ifmo.lab06.client.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.exception.InvalidArgsException;
 import se.ifmo.lab06.client.manager.CommandManager;
 import se.ifmo.lab06.client.parser.CommandParser;
-import se.ifmo.lab06.client.util.IOProvider;
+import se.ifmo.lab06.shared.util.IOProvider;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class ExecuteScriptCommand extends Command {
+
+    private static final Class<?>[] ARGS = new Class<?>[]{String.class};
 
     private final int recDepth;
     public ExecuteScriptCommand(IOProvider provider, Client client, int recDepth) {
@@ -21,7 +23,7 @@ public class ExecuteScriptCommand extends Command {
 
     @Override
     public void execute(String[] args) throws InvalidArgsException {
-        validateArgs(args, 1);
+        validateArgs(args);
         String fileName = args[0];
         try (FileReader fileReader = new FileReader(fileName)) {
             var provider = new IOProvider(new Scanner(fileReader), this.provider.getPrinter());
@@ -33,5 +35,10 @@ public class ExecuteScriptCommand extends Command {
         } catch (IOException e) {
             provider.getPrinter().print("Something went wrong while reading.");
         }
+    }
+
+    @Override
+    public Class<?>[] getArgumentTypes() {
+        return ARGS;
     }
 }

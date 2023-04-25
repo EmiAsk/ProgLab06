@@ -1,10 +1,13 @@
 package se.ifmo.lab06.client.command;
 
 import se.ifmo.lab06.client.Client;
-import se.ifmo.lab06.client.exception.InvalidArgsException;
-import se.ifmo.lab06.client.util.IOProvider;
+import se.ifmo.lab06.shared.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.util.IOProvider;
+import se.ifmo.lab06.shared.util.ArgumentValidator;
 
 public abstract class Command {
+    private static final Class<?>[] ARGS = new Class<?>[]{};
+
     String name;
     String description;
     IOProvider provider;
@@ -20,16 +23,20 @@ public abstract class Command {
     public abstract void execute(String[] args) throws InvalidArgsException;
 
     public String getDescription() {
-        return String.format("%s    |     %s", name, description);
+        return String.format("%40s    |    %s", name, description);
     }
 
     public String getName() {
         return name;
     }
 
-    public void validateArgs(String[] args, int length) throws InvalidArgsException {
-        if (args.length != length) {
+    public void validateArgs(String[] args) throws InvalidArgsException {
+        if (!ArgumentValidator.validate(getArgumentTypes(), args)) {
             throw new InvalidArgsException();
         }
+    }
+
+    public Class<?>[] getArgumentTypes() {
+        return ARGS;
     }
 }

@@ -1,8 +1,8 @@
 package se.ifmo.lab06.server.manager;
 
 import se.ifmo.lab06.server.command.*;
-import se.ifmo.lab06.server.exception.InvalidArgsException;
-import se.ifmo.lab06.server.util.IOProvider;
+import se.ifmo.lab06.shared.exception.InvalidArgsException;
+import se.ifmo.lab06.shared.util.IOProvider;
 import se.ifmo.lab06.shared.dto.CommandDTO;
 import se.ifmo.lab06.shared.dto.StatusCode;
 import se.ifmo.lab06.shared.dto.request.CommandRequest;
@@ -11,14 +11,13 @@ import se.ifmo.lab06.shared.dto.response.CommandResponse;
 import se.ifmo.lab06.shared.dto.response.Response;
 import se.ifmo.lab06.shared.dto.response.ValidationResponse;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class CommandManager {
     private final Map<String, Command> commands = new HashMap<>();
+    private final CollectionManager collectionManager;
 
     public CommandManager(CollectionManager collection, IOProvider provider, int recDepth) {
         register("info", new InfoCommand(provider, collection));
@@ -37,15 +36,20 @@ public class CommandManager {
         register("print_unique_house", new PrintUniqueHouseCommand(provider, collection));
 //        register("execute_script", new ExecuteScriptCommand(provider, collection, recDepth));
         register("help", new HelpCommand(provider, collection, commands));
+        this.collectionManager = collection;
     }
 
     public List<CommandDTO> getCommands() {
         return commands.entrySet()
                 .stream()
-                .map(c -> new CommandDTO(c.getKey(), c.getValue().getDescription(), c.getValue().isRequiresModel()))
+                .map(c -> new CommandDTO(
+                        c.getKey(),
+                        c.getValue().getDescription(),
+                        c.getValue().getArgumentTypes(),
+                        c.getValue().isRequiresModel())
+                )
                 .toList();
     }
-
 
     public void register(String commandName, Command command) {
         commands.put(commandName, command);
@@ -54,7 +58,9 @@ public class CommandManager {
     public Response execute(CommandRequest request) {
         try {
             if (commands.containsKey(request.name())) {
-                return commands.get(request.name()).execute(request);
+                var response = commands.get(request.name()).execute(request);
+                collectionManager.dump();
+                return response;
             }
             return new CommandResponse("Invalid command", StatusCode.ERROR);
         } catch (InvalidArgsException e) {
@@ -66,9 +72,7 @@ public class CommandManager {
         try {
             if (commands.containsKey(request.commandName())) {
                 var command = commands.get(request.commandName());
-                System.out.println(Arrays.toString(request.args()));
-                System.out.println(command.getArgNumber());
-                command.validateArgs(request.args(), command.getArgNumber());
+                command.validateArgs(request.args());
             }
             return new ValidationResponse("OK", StatusCode.OK);
         } catch (InvalidArgsException e) {
