@@ -38,12 +38,23 @@ public class Client implements AutoCloseable {
     }
 
     public void send(byte[] data) throws IOException {
-        int n = (int) Math.ceil((double) data.length / (BATCH - 1));
-
+        int n = (int) Math.ceil((double) data.length / (BATCH - 1 - 6));
         for (int i = 0; i < n; i++) {
             byte[] batch = new byte[BATCH];
-            System.arraycopy(data, i * (BATCH - 1), batch, 0, Math.min(data.length - i * (BATCH - 1), BATCH - 1));
-            batch[BATCH - 1] = (byte) ((i + 1 == n) ? 1 : 0);
+            System.arraycopy(data, i * (BATCH - 1 - 6), batch, 0, Math.min(data.length - i * (BATCH - 1 - 6), BATCH - 1 - 6));
+
+//            var local = "192.12.12.12";
+            var buffer = ByteBuffer.allocate(6);
+            buffer.put((byte) (12 - 128));
+            buffer.put((byte) (12 - 128));
+            buffer.put((byte) (12 - 128));
+            buffer.put((byte) (12 - 128));
+
+            buffer.putChar((char) 4666);
+
+            buffer.get(0, batch, BATCH - 6, 6);
+
+            batch[BATCH - 1 - 6] = (byte) ((i + 1 == n) ? 1 : 0);
             connection.send(ByteBuffer.wrap(batch), address);
             logger.info("Batch {}/{} has been sent", i + 1, n);
         }
