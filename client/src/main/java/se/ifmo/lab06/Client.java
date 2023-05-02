@@ -16,10 +16,13 @@ import java.util.Arrays;
 public class Client implements AutoCloseable {
 
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
+
     private static final int BATCH = 1024;
+
     private static final long MAX_DELAY = 2_000_000_000;
 
     private final DatagramChannel connection;
+
     private final InetSocketAddress address;
 
 

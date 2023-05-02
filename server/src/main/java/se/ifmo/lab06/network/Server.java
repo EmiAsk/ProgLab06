@@ -2,6 +2,8 @@ package se.ifmo.lab06.network;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.ifmo.lab06.dto.request.PingRequest;
+import se.ifmo.lab06.dto.response.PingResponse;
 import se.ifmo.lab06.manager.CommandManager;
 import se.ifmo.lab06.manager.ReceivingManager;
 import se.ifmo.lab06.manager.SendingManager;
@@ -56,6 +58,11 @@ public class Server implements AutoCloseable {
                 if (request instanceof ValidationRequest validationRequest) {
                     sendingManager.send(address, commandManager.validate(validationRequest));
                 }
+
+                if (request instanceof PingRequest) {
+                    sendingManager.send(address, new PingResponse());
+                }
+
             } catch (IOException e) {
                 logger.error("Error occurred while I/O.\n{}", e.getMessage());
             } catch (ClassNotFoundException e) {

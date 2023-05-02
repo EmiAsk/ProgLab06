@@ -11,6 +11,7 @@ import se.ifmo.lab06.dto.response.CommandResponse;
 import se.ifmo.lab06.dto.response.Response;
 import se.ifmo.lab06.dto.response.ValidationResponse;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class CommandManager {
         commands.put(commandName, command);
     }
 
-    public Response execute(CommandRequest request) {
+    public Response execute(CommandRequest request) throws IOException {
         try {
             if (commands.containsKey(request.name())) {
                 var response = commands.get(request.name()).execute(request);

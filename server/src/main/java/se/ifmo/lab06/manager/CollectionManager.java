@@ -1,19 +1,13 @@
 package se.ifmo.lab06.manager;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import se.ifmo.lab06.model.Flat;
 import se.ifmo.lab06.model.Furnish;
-import se.ifmo.lab06.parser.JsonParser;
-import se.ifmo.lab06.util.ZonedDateTimeSerializer;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class CollectionManager {
     private final Stack<Flat> collection;
@@ -32,7 +26,7 @@ public class CollectionManager {
 
     public static CollectionManager fromFile(String fileName) throws FileNotFoundException {
         CollectionManager collection = new CollectionManager(fileName);
-        Flat[] flats = JsonParser.parseFile(new FileReader(fileName));
+        Flat[] flats = JsonManager.fromFile(new FileReader(fileName));
         for (Flat flat : flats) collection.push(flat);
         return collection;
     }
@@ -70,27 +64,8 @@ public class CollectionManager {
                 collection.getClass().getName(), createdAt, collection.size());
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
-    public String dump() {
-        GsonBuilder builder = new GsonBuilder();
-        builder.setPrettyPrinting();
-        builder.registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeSerializer());
-        Gson gson = builder.create();
-        return gson.toJson(collection.toArray(), Flat[].class);
-    }
-
-    public boolean validate() {
-        HashSet<Long> idSet = new HashSet<>();
-        for (Flat flat : collection) {
-            if (!flat.validate()) {
-                return false;
-            }
-            idSet.add(flat.getId());
-        }
-        return (idSet.size() == collection.size());
+    public void dump() throws IOException {
+        JsonManager.toFile(fileName, collection);
     }
 
     public Flat min() {
@@ -104,8 +79,7 @@ public class CollectionManager {
     }
 
     public long removeByFurnish(Furnish furnish) {
-        long n = collection
-                .stream()
+        long n = collection.stream()
                 .filter(flat -> flat.getFurnish() == furnish)
                 .count();
         collection.removeIf(flat -> flat.getFurnish() == furnish);
