@@ -2,15 +2,15 @@ package se.ifmo.lab06.network;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.ifmo.lab06.dto.request.CommandRequest;
+import se.ifmo.lab06.dto.request.GetCommandsRequest;
 import se.ifmo.lab06.dto.request.PingRequest;
+import se.ifmo.lab06.dto.request.ValidationRequest;
+import se.ifmo.lab06.dto.response.GetCommandsResponse;
 import se.ifmo.lab06.dto.response.PingResponse;
 import se.ifmo.lab06.manager.CommandManager;
 import se.ifmo.lab06.manager.ReceivingManager;
 import se.ifmo.lab06.manager.SendingManager;
-import se.ifmo.lab06.dto.request.CommandRequest;
-import se.ifmo.lab06.dto.request.GetCommandsRequest;
-import se.ifmo.lab06.dto.request.ValidationRequest;
-import se.ifmo.lab06.dto.response.GetCommandsResponse;
 
 import java.io.IOException;
 import java.net.DatagramSocket;

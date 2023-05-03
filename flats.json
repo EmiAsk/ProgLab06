@@ -1,5 +1,23 @@
 [
   {
+    "id": 1,
+    "name": "Emil",
+    "coordinates": {
+      "x": 1,
+      "y": 111.0
+    },
+    "creationDate": "2023-03-09T14:58:53.428316200+03:00[Europe/Moscow]",
+    "area": 222,
+    "numberOfRooms": 5,
+    "furnish": "BAD",
+    "view": "TERRIBLE",
+    "house": {
+      "name": "Emil\u0027s House",
+      "year": 123,
+      "numberOfFlatsOnFloor": 5
+    }
+  },
+  {
     "id": 1223,
     "name": "name",
     "coordinates": {
@@ -19,40 +37,22 @@
     }
   },
   {
-    "id": 1,
-    "name": "Emil",
-    "coordinates": {
-      "x": 1,
-      "y": 111.0
-    },
-    "creationDate": "2023-03-09T14:58:53.428316200+03:00[Europe/Moscow]",
-    "area": 222,
-    "numberOfRooms": 5,
-    "furnish": "BAD",
-    "view": "TERRIBLE",
-    "house": {
-      "name": "Emil\u0027s House",
-      "year": 123,
-      "numberOfFlatsOnFloor": 5
-    }
-  },
-  {
     "id": 11606203153,
-    "name": "OKAY",
+    "name": "VVVVVVVVVVVVVVV",
     "coordinates": {
-      "x": -123,
-      "y": 779.0
+      "x": 234,
+      "y": 3.0
     },
     "creationDate": "2023-03-09T22:32:43.898262300+03:00[Europe/Moscow]",
-    "area": 715,
-    "numberOfRooms": 123,
-    "furnish": "FINE",
+    "area": 34,
+    "numberOfRooms": 34,
+    "furnish": "NONE",
     "view": "YARD",
     "transport": "ENOUGH",
     "house": {
-      "name": "HOUSE NAME OKAY",
-      "year": 636,
-      "numberOfFlatsOnFloor": 1
+      "name": "lbbbbbbbbbbbbbb",
+      "year": 234,
+      "numberOfFlatsOnFloor": 32
     }
   }
 ]

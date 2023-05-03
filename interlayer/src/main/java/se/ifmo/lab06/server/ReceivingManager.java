@@ -1,4 +1,4 @@
-package se.ifmo.lab06.manager;
+package se.ifmo.lab06.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

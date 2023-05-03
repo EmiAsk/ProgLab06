@@ -1,4 +1,4 @@
-package se.ifmo.lab06;
+package se.ifmo.lab06.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +7,6 @@ import se.ifmo.lab06.dto.response.Response;
 
 import javax.naming.TimeLimitExceededException;
 import java.io.*;
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -19,25 +18,25 @@ public class Client implements AutoCloseable {
 
     private static final int BATCH = 1024;
 
-    private static final long MAX_DELAY = 2_000_000_000;
+    private long timeout = 2_000_000_000;
 
     private final DatagramChannel connection;
 
-    private final InetSocketAddress address;
-
-
-    private Client(DatagramChannel connection, InetSocketAddress address) {
+    private Client(DatagramChannel connection) {
         this.connection = connection;
-        this.address = address;
     }
 
-    public static Client connect(String host, int port) throws IOException {
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
+
+    public static Client connect() throws IOException {
         var dc = DatagramChannel.open();
         dc.configureBlocking(false);
-        return new Client(dc, new InetSocketAddress(host, port));
+        return new Client(dc);
     }
 
-    public void send(byte[] data) throws IOException {
+    public void send(SocketAddress address, byte[] data) throws IOException {
         int n = (int) Math.ceil((double) data.length / (BATCH - 1));
         for (int i = 0; i < n; i++) {
             byte[] batch = new byte[BATCH];
@@ -45,16 +44,16 @@ public class Client implements AutoCloseable {
 
             batch[BATCH - 1] = (byte) ((i + 1 == n) ? 1 : 0);
             connection.send(ByteBuffer.wrap(batch), address);
-//            logger.info("Batch {}/{} has been sent", i + 1, n);
+            logger.info("Batch {}/{} has been sent", i + 1, n);
         }
     }
 
-    public void send(Request request) throws IOException {
+    public void send(SocketAddress address, Request request) throws IOException {
         var byteStream = new ByteArrayOutputStream();
         var objectStream = new ObjectOutputStream(byteStream);
         objectStream.writeObject(request);
-        send(byteStream.toByteArray());
-//        logger.info("Request <{}> sent to {}", request, address);
+        send(address, byteStream.toByteArray());
+        logger.info("Request <{}> sent to {}", request, address);
     }
 
     public Response receiveResponse() throws IOException, ClassNotFoundException, TimeLimitExceededException {
@@ -73,7 +72,7 @@ public class Client implements AutoCloseable {
         var startTime = System.nanoTime();
         while (true) {
             while (address == null) {
-                if ((System.nanoTime() - startTime) > MAX_DELAY) {
+                if ((System.nanoTime() - startTime) > timeout) {
                     throw new TimeLimitExceededException("Server not available. Try later");
                 }
                 address = connection.receive(buffer);
@@ -88,8 +87,8 @@ public class Client implements AutoCloseable {
         }
     }
 
-    public Response sendAndReceive(Request request) throws IOException, ClassNotFoundException, TimeLimitExceededException {
-        send(request);
+    public Response sendAndReceive(SocketAddress address, Request request) throws IOException, ClassNotFoundException, TimeLimitExceededException {
+        send(address, request);
         return receiveResponse();
     }
 

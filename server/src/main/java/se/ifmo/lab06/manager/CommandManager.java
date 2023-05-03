@@ -1,8 +1,6 @@
 package se.ifmo.lab06.manager;
 
 import se.ifmo.lab06.command.*;
-import se.ifmo.lab06.exception.InvalidArgsException;
-import se.ifmo.lab06.util.IOProvider;
 import se.ifmo.lab06.dto.CommandDTO;
 import se.ifmo.lab06.dto.StatusCode;
 import se.ifmo.lab06.dto.request.CommandRequest;
@@ -10,6 +8,8 @@ import se.ifmo.lab06.dto.request.ValidationRequest;
 import se.ifmo.lab06.dto.response.CommandResponse;
 import se.ifmo.lab06.dto.response.Response;
 import se.ifmo.lab06.dto.response.ValidationResponse;
+import se.ifmo.lab06.exception.InvalidArgsException;
+import se.ifmo.lab06.util.IOProvider;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -55,6 +55,7 @@ public class CommandManager {
     public Response execute(CommandRequest request) throws IOException {
         try {
             if (commands.containsKey(request.name())) {
+                collectionManager.update();
                 var response = commands.get(request.name()).execute(request);
                 collectionManager.dump();
                 return response;

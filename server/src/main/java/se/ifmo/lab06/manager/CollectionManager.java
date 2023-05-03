@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Stack;
 
 public class CollectionManager {
     private final Stack<Flat> collection;
@@ -66,6 +68,13 @@ public class CollectionManager {
 
     public void dump() throws IOException {
         JsonManager.toFile(fileName, collection);
+    }
+
+    public void update() throws IOException {
+        try (var file = new FileReader(fileName)) {
+            this.collection.clear();
+            this.collection.addAll(List.of(JsonManager.fromFile(file)));
+        }
     }
 
     public Flat min() {
